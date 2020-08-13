@@ -4,7 +4,7 @@ const multer = require('multer');
 const FormData = require('form-data');
 const pdf = require('./createPdf');
 const fs = require('fs');
-
+const server = "http://172.17.0.1:4000";
 const app = express();
 const port = process.argv[2]; 
 
@@ -48,7 +48,7 @@ app.post('/addPatient', (req, res) => {
 })
 
 app.get('/getData', (req, res) => {
-    axios.get('http://localhost:4000/getData')
+    axios.get(server + '/getData')
       .then(function (response) {
         res.json(response.data)
       })
@@ -67,7 +67,7 @@ app.get('/getPdf', (req,res) => {
 })
 
 app.post('/createPdf', (req,res) => {  
-  axios.post('http://localhost:4000/getCity', req.body)
+  axios.post( server + '/getCity', req.body)
   .then( function (response) {
     var save =  pdf.createPdf(response.data);
     res.send(save);
@@ -83,7 +83,7 @@ app.post('/sendImage', (req, res) => {
 
 
 function sendPatient(data){
-  axios.post('http://localhost:4000/savePatient', data)
+  axios.post( server + '/savePatient', data)
     .then(function (response) {
       console.log("se guardo el paciente");
     })
@@ -96,8 +96,8 @@ function sendImg(req){
 	var img = fs.readFileSync(req.file.path);
 	var data = new FormData();
 	data.append('file',img, req.file.originalname);
-	var  server = 'http://localhost:4000/sendImage';
-	axios.post(server, data, {
+	var  url = server + '/sendImage';
+	axios.post(url, data, {
 		headers: data.getHeaders()
 	})
 	  .then((response) => {
